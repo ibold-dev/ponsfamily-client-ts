@@ -5,8 +5,7 @@
  *
  * Env vars:
  *   RPC_URL         — Robinhood Chain RPC endpoint
- *   PRIVATE_KEY     — Wallet private key (for claiming)
- *   CREATOR_ADDRESS — Address to check balances for
+ *   PRIVATE_KEY     — Wallet private key (must be the creator fee recipient)
  *   QUOTE_ASSET     — (optional) ERC-20 quote asset to check/claim
  */
 
@@ -20,9 +19,8 @@ dotenv.config({ path: ".env" });
 
 const RPC_URL = process.env.RPC_URL!;
 const PRIVATE_KEY = process.env.PRIVATE_KEY!;
-const CREATOR_ADDRESS = process.env.CREATOR_ADDRESS!;
-if (!RPC_URL || !PRIVATE_KEY || !CREATOR_ADDRESS) {
-  console.error("Set RPC_URL, PRIVATE_KEY, and CREATOR_ADDRESS env vars");
+if (!RPC_URL || !PRIVATE_KEY) {
+  console.error("Set RPC_URL and PRIVATE_KEY env vars");
   process.exit(1);
 }
 
@@ -41,14 +39,14 @@ async function main() {
   });
 
   // 1. Check native ETH balance
-  const ethBalance = await pons.fees.getBalance(CREATOR_ADDRESS as Address);
+  const ethBalance = await pons.fees.getBalance(account.address);
   console.log(`Native ETH fees: ${formatETH(ethBalance)}`);
 
   // 2. Check ERC-20 balance if quote asset provided
   const quoteAsset = process.env.QUOTE_ASSET as Address | undefined;
   if (quoteAsset) {
     const erc20Balance = await pons.fees.getERC20Balance(
-      CREATOR_ADDRESS as Address,
+      account.address,
       quoteAsset,
     );
     console.log(`ERC-20 fees (${quoteAsset}): ${erc20Balance}`);
@@ -63,7 +61,7 @@ async function main() {
   // 4. Claim ERC-20 fees
   if (quoteAsset) {
     const erc20Balance = await pons.fees.getERC20Balance(
-      CREATOR_ADDRESS as Address,
+      account.address,
       quoteAsset,
     );
     if (erc20Balance > 0n) {

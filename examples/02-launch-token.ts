@@ -77,6 +77,9 @@ async function main() {
   };
 
   // 5. Launch and buy atomically
+  // minTokensOut is 0n because the curve doesn't exist yet — no quote possible
+  // before the launch. The atomic pattern prevents front-running between launch
+  // and buy, but you accept whatever price the curve sets on creation.
   const buyAmount = parseEther("0.1");
   const result = await pons.factory.launchAndBuy(
     params,

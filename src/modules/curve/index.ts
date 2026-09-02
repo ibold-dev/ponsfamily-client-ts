@@ -176,6 +176,10 @@ export function createCurveModule(
         tokensOut = sellable;
         const net = amountIn(sellable, quoteReserve, tokenReserve);
         const totalBps = BPS - feeBps - creatorTaxBps - snipeBps;
+        if (totalBps <= 0n) {
+          // Fees consume entire input — return full amount as refund
+          return { tokensOut, spent: 0n, refund: quoteIn };
+        }
         const grossed = ceilDiv((net * BPS), totalBps);
         spent = grossed < quoteIn ? grossed : quoteIn;
       }

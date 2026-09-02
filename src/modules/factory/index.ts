@@ -165,14 +165,14 @@ export function createFactoryModule(
         return write(
           "launchToken",
           [pinnedParams, configId, pairToken, snipeTaxExemptions],
-          pairToken === ZERO_ADDRESS ? launchFeeAmount : launchFeeAmount,
+          launchFeeAmount,
         );
       }
 
       return write(
         "launchToken",
         [pinnedParams, configId, pairToken],
-        pairToken === ZERO_ADDRESS ? launchFeeAmount : launchFeeAmount,
+        launchFeeAmount,
       );
     },
 

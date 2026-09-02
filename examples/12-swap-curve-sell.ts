@@ -40,6 +40,10 @@ if (!RPC_URL || !PRIVATE_KEY || !CURVE_ADDRESS || !TOKEN_ADDRESS || !SELL_AMOUNT
   );
   process.exit(1);
 }
+if (Number.isNaN(SLIPPAGE_BPS) || SLIPPAGE_BPS < 0 || SLIPPAGE_BPS > 10000) {
+  console.error("SLIPPAGE_BPS must be a number between 0 and 10000");
+  process.exit(1);
+}
 
 async function main() {
   const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
