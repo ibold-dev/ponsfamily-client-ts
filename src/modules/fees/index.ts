@@ -1,7 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-} from "viem";
+import { type Address, type PublicClient } from "viem";
 import { escrowAbi } from "../../abis/escrow.js";
 import { factoryAbi } from "../../abis/factory.js";
 import { curveAbi } from "../../abis/curve.js";
@@ -25,10 +22,7 @@ export function createFesModule(
       });
     },
 
-    async getERC20Balance(
-      recipient: Address,
-      token: Address,
-    ): Promise<bigint> {
+    async getERC20Balance(recipient: Address, token: Address): Promise<bigint> {
       return publicClient.readContract({
         address: addresses.feeEscrow,
         abi: escrowAbi,
@@ -62,7 +56,7 @@ export function createFesModule(
 
     async getUnsweptBalance(
       curve: Address,
-      creatorFeeRecipient: Address,
+      _creatorFeeRecipient: Address,
     ): Promise<{ pendingFees: bigint; pendingCreatorTax: bigint }> {
       const [pendingFees, pendingCreatorTax] = await Promise.all([
         publicClient.readContract({

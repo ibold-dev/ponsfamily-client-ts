@@ -1,8 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-  decodeEventLog,
-} from "viem";
+import { type Address, type PublicClient, decodeEventLog } from "viem";
 import { curveAbi } from "../../abis/curve.js";
 import { BPS } from "../../constants.js";
 import type {
@@ -42,8 +38,7 @@ export function createCurveModule(
     args: readonly unknown[],
     value?: bigint,
   ): Promise<`0x${string}`> => {
-    if (!wallet)
-      throw new Error("Wallet required for write operations");
+    if (!wallet) throw new Error("Wallet required for write operations");
     const { request } = await publicClient.simulateContract({
       address: contractAddress,
       abi: curveAbi,
@@ -66,12 +61,7 @@ export function createCurveModule(
       const isNative = await read<boolean>(curve, "isNativeQuote");
       const sendValue = isNative ? quoteIn : (value ?? 0n);
 
-      const hash = await write(
-        curve,
-        "buy",
-        [quoteIn, minTokensOut, recipient],
-        sendValue,
-      );
+      const hash = await write(curve, "buy", [quoteIn, minTokensOut, recipient], sendValue);
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       let tokensOut = 0n;
@@ -102,11 +92,7 @@ export function createCurveModule(
       minQuoteOut: bigint,
       recipient: Address,
     ): Promise<SellResult> {
-      const hash = await write(curve, "sell", [
-        tokensIn,
-        minQuoteOut,
-        recipient,
-      ]);
+      const hash = await write(curve, "sell", [tokensIn, minQuoteOut, recipient]);
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       let quoteOut = 0n;
@@ -131,11 +117,7 @@ export function createCurveModule(
       return { quoteOut, hash };
     },
 
-    async quoteBuy(
-      curve: Address,
-      quoteIn: bigint,
-      recipient: Address,
-    ): Promise<BuyQuote> {
+    async quoteBuy(curve: Address, quoteIn: bigint, recipient: Address): Promise<BuyQuote> {
       const results = await Promise.all([
         read<readonly [bigint, bigint]>(curve, "getReserves"),
         read<bigint>(curve, "sellableTokens"),
@@ -165,11 +147,7 @@ export function createCurveModule(
       const fee = (spent * feeBps) / BPS;
       const tax = (spent * creatorTaxBps) / BPS;
       const snipeTax = (spent * snipeBps) / BPS;
-      let tokensOut = amountOut(
-        spent - fee - tax - snipeTax,
-        quoteReserve,
-        tokenReserve,
-      );
+      let tokensOut = amountOut(spent - fee - tax - snipeTax, quoteReserve, tokenReserve);
 
       // Clamp to sellable and refund excess
       if (tokensOut > sellable) {
@@ -180,7 +158,7 @@ export function createCurveModule(
           // Fees consume entire input — return full amount as refund
           return { tokensOut, spent: 0n, refund: quoteIn };
         }
-        const grossed = ceilDiv((net * BPS), totalBps);
+        const grossed = ceilDiv(net * BPS, totalBps);
         spent = grossed < quoteIn ? grossed : quoteIn;
       }
 
@@ -209,10 +187,7 @@ export function createCurveModule(
     },
 
     async getState(curve: Address): Promise<CurveState> {
-      const reserves = await read<readonly [bigint, bigint]>(
-        curve,
-        "getReserves",
-      );
+      const reserves = await read<readonly [bigint, bigint]>(curve, "getReserves");
       const [
         realQuoteReserve,
         sellableTokens,
@@ -256,10 +231,7 @@ export function createCurveModule(
     },
 
     async getReserves(curve: Address): Promise<CurveReserves> {
-      const reserves = await read<readonly [bigint, bigint]>(
-        curve,
-        "getReserves",
-      );
+      const reserves = await read<readonly [bigint, bigint]>(curve, "getReserves");
       return { quoteReserve: reserves[0], tokenReserve: reserves[1] };
     },
 
@@ -271,10 +243,7 @@ export function createCurveModule(
       return read<boolean>(curve, "readyToGraduate");
     },
 
-    async currentSnipeTaxBps(
-      curve: Address,
-      recipient: Address,
-    ): Promise<bigint> {
+    async currentSnipeTaxBps(curve: Address, recipient: Address): Promise<bigint> {
       return read<bigint>(curve, "currentSnipeTaxBps", [recipient]);
     },
   };

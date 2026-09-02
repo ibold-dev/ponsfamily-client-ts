@@ -1,7 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-} from "viem";
+import { type Address, type PublicClient } from "viem";
 import { vaultAbi } from "../../abis/vault.js";
 import type { BuybackModule, PonsWallet, VestingState } from "../../types.js";
 
@@ -53,9 +50,7 @@ export function createBuybackModule(
           }),
         ]);
 
-      const progress = totalLocked > 0n
-        ? Number(vestedAmount) / Number(totalLocked)
-        : 0;
+      const progress = totalLocked > 0n ? Number(vestedAmount) / Number(totalLocked) : 0;
 
       return {
         totalLocked,

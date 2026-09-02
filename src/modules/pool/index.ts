@@ -1,12 +1,6 @@
-import {
-  type Address,
-  type PublicClient,
-  encodeAbiParameters,
-  keccak256,
-} from "viem";
+import { type Address, type PublicClient, encodeAbiParameters, keccak256 } from "viem";
 import { hookAbi } from "../../abis/hook.js";
 import type { LaunchedToken, PoolKey, PoolModule } from "../../types.js";
-import { ZERO_ADDRESS } from "../../constants.js";
 
 type ContractAddresses = { memeHook: Address };
 
@@ -43,21 +37,12 @@ export function createPoolModule(
             { type: "int24" },
             { type: "address" },
           ],
-          [
-            poolKey.currency0,
-            poolKey.currency1,
-            poolKey.fee,
-            poolKey.tickSpacing,
-            poolKey.hooks,
-          ],
+          [poolKey.currency0, poolKey.currency1, poolKey.fee, poolKey.tickSpacing, poolKey.hooks],
         ),
       );
     },
 
-    async pendingFees(
-      poolId: `0x${string}`,
-      currency: Address,
-    ): Promise<bigint> {
+    async pendingFees(poolId: `0x${string}`, currency: Address): Promise<bigint> {
       return publicClient.readContract({
         address: addresses.memeHook,
         abi: hookAbi,
@@ -66,10 +51,7 @@ export function createPoolModule(
       });
     },
 
-    async pendingCreatorTax(
-      poolId: `0x${string}`,
-      currency: Address,
-    ): Promise<bigint> {
+    async pendingCreatorTax(poolId: `0x${string}`, currency: Address): Promise<bigint> {
       return publicClient.readContract({
         address: addresses.memeHook,
         abi: hookAbi,

@@ -14,11 +14,7 @@ export function ceilDiv(a: bigint, b: bigint): bigint {
  *
  * Formula: out = (in * reserveOut) / (reserveIn + in)
  */
-export function amountOut(
-  inAmount: bigint,
-  reserveIn: bigint,
-  reserveOut: bigint,
-): bigint {
+export function amountOut(inAmount: bigint, reserveIn: bigint, reserveOut: bigint): bigint {
   if (inAmount === 0n || reserveIn === 0n || reserveOut === 0n) return 0n;
   return (inAmount * reserveOut) / (reserveIn + inAmount);
 }
@@ -29,11 +25,7 @@ export function amountOut(
  *
  * Formula: in = (out * reserveIn) / (reserveOut - out) + 1
  */
-export function amountIn(
-  outAmount: bigint,
-  reserveIn: bigint,
-  reserveOut: bigint,
-): bigint {
+export function amountIn(outAmount: bigint, reserveIn: bigint, reserveOut: bigint): bigint {
   if (outAmount === 0n || reserveOut === 0n) return 0n;
   if (outAmount >= reserveOut) throw new Error("Output exceeds reserve");
   return (outAmount * reserveIn) / (reserveOut - outAmount) + 1n;

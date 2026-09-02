@@ -34,7 +34,7 @@ describe("constants", () => {
   });
 
   it("all addresses are valid checksummed addresses", () => {
-    for (const [name, address] of Object.entries(ADDRESSES)) {
+    for (const [, address] of Object.entries(ADDRESSES)) {
       expect(address).toMatch(/^0x[0-9a-fA-F]{40}$/);
     }
   });

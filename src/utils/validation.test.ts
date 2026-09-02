@@ -18,9 +18,9 @@ describe("requireValidAddress", () => {
   });
 
   it("throws for invalid address", () => {
-    expect(() =>
-      requireValidAddress("0xinvalid" as Address, "test"),
-    ).toThrow("Invalid test address");
+    expect(() => requireValidAddress("0xinvalid" as Address, "test")).toThrow(
+      "Invalid test address",
+    );
   });
 });
 
@@ -49,9 +49,7 @@ describe("requireValidExemptions", () => {
   });
 
   it("throws for list exceeding limit", () => {
-    const list = Array(MAX_SNIPE_EXEMPTIONS + 1).fill(
-      VALID_ADDRESS,
-    ) as Address[];
+    const list = Array(MAX_SNIPE_EXEMPTIONS + 1).fill(VALID_ADDRESS) as Address[];
     expect(() => requireValidExemptions(list)).toThrow("too long");
   });
 });

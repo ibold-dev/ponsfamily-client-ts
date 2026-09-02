@@ -18,9 +18,7 @@ export function requireValidCreatorTax(taxBps: number, maxBps: bigint): void {
     throw new Error("Creator tax cannot be negative");
   }
   if (BigInt(taxBps) > maxBps) {
-    throw new Error(
-      `Creator tax ${taxBps} bps exceeds protocol max ${maxBps} bps`,
-    );
+    throw new Error(`Creator tax ${taxBps} bps exceeds protocol max ${maxBps} bps`);
   }
 }
 
@@ -56,10 +54,7 @@ export function requireValidSlippage(slippageBps: number): void {
 /**
  * Compute minimum output from a quoted amount and slippage tolerance.
  */
-export function minOutputWithSlippage(
-  quoted: bigint,
-  slippageBps: number,
-): bigint {
+export function minOutputWithSlippage(quoted: bigint, slippageBps: number): bigint {
   const tolerance = (quoted * BigInt(slippageBps)) / BPS;
   return quoted - tolerance;
 }

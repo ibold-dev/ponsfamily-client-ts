@@ -1,5 +1,4 @@
 import { type Account, type Address, type Hex, type PublicClient, type WalletClient } from "viem";
-import type { PHASE } from "./constants.js";
 
 // ── Launch Configuration ───────────────────────────────────────────────────
 
@@ -193,10 +192,7 @@ export interface FactoryModule {
   openLaunchConfigs(): Promise<LaunchConfigWithId[]>;
   getLaunchConfig(id: bigint): Promise<LaunchConfig>;
   getLaunchedToken(token: Address): Promise<LaunchedToken>;
-  previewLaunchEconomics(
-    configId: bigint,
-    pairToken: Address,
-  ): Promise<Hex>;
+  previewLaunchEconomics(configId: bigint, pairToken: Address): Promise<Hex>;
   launchFee(): Promise<bigint>;
   canLaunch(address: Address): Promise<boolean>;
   maxCreatorTaxBps(): Promise<bigint>;
@@ -274,11 +270,7 @@ export interface BuybackModule {
 
 export interface EventsModule {
   getLaunches(fromBlock: bigint, toBlock?: bigint | "latest"): Promise<LaunchEvent[]>;
-  getTrades(
-    curve: Address,
-    fromBlock: bigint,
-    toBlock?: bigint | "latest",
-  ): Promise<TradeEvent[]>;
+  getTrades(curve: Address, fromBlock: bigint, toBlock?: bigint | "latest"): Promise<TradeEvent[]>;
   getFeeSweeps(
     hook: Address,
     fromBlock: bigint,

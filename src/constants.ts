@@ -7,8 +7,7 @@ export const ROBINHOOD_CHAIN_ID = 4663 as const;
 export const BPS = 10_000n as const;
 
 /** Zero address — used for native ETH pair */
-export const ZERO_ADDRESS: Address =
-  "0x0000000000000000000000000000000000000000";
+export const ZERO_ADDRESS: Address = "0x0000000000000000000000000000000000000000";
 
 // ── Deployed Contract Addresses (Robinhood Chain) ──────────────────────────
 
@@ -20,8 +19,7 @@ export const ADDRESSES = {
   launchLocker: "0x267444D099b10fB5Ed7c3Cc7B7c767AdcA574952" as Address,
   launchAndBuy: "0xe33E9E479dF8802cb0866d5d05258bEc4cF62948" as Address,
   launchDeployer: "0x3711ceA4feaDE896C913C68F01Eda97Cb06D1A42" as Address,
-  graduationExecutor:
-    "0xC7819B64A1dAECD7eC19856d026cb14EfBd89046" as Address,
+  graduationExecutor: "0xC7819B64A1dAECD7eC19856d026cb14EfBd89046" as Address,
   graduationGuard: "0xf5695117b99B6f6401e67d4195BD653628176C6C" as Address,
 } as const;
 

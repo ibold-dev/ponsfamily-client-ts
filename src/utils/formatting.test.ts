@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  normalizeAddress,
-  isValidAddress,
-  shortenAddress,
-} from "../utils/formatting.js";
+import { normalizeAddress, isValidAddress, shortenAddress } from "../utils/formatting.js";
 import { ZERO_ADDRESS } from "../constants.js";
 
 describe("normalizeAddress", () => {

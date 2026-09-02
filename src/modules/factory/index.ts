@@ -1,8 +1,4 @@
-import {
-  type Address,
-  type Hex,
-  type PublicClient,
-} from "viem";
+import { type Address, type Hex, type PublicClient } from "viem";
 import { factoryAbi } from "../../abis/factory.js";
 import { routerAbi } from "../../abis/router.js";
 import { ZERO_ADDRESS } from "../../constants.js";
@@ -27,10 +23,7 @@ export function createFactoryModule(
   wallet: PonsWallet | undefined,
   addresses: ContractAddresses,
 ): FactoryModule {
-  const read = async <T>(
-    functionName: string,
-    args?: readonly unknown[],
-  ): Promise<T> =>
+  const read = async <T>(functionName: string, args?: readonly unknown[]): Promise<T> =>
     publicClient.readContract({
       address: addresses.factory,
       abi: factoryAbi,
@@ -43,8 +36,7 @@ export function createFactoryModule(
     args: readonly unknown[],
     value?: bigint,
   ): Promise<`0x${string}`> => {
-    if (!wallet)
-      throw new Error("Wallet required for write operations");
+    if (!wallet) throw new Error("Wallet required for write operations");
     const { request } = await publicClient.simulateContract({
       address: addresses.factory,
       abi: factoryAbi,
@@ -65,18 +57,16 @@ export function createFactoryModule(
         ),
       );
       return configs
-        .map(
-          (config, id): LaunchConfigWithId => ({
-            id: BigInt(id),
-            supply: config.supply,
-            curveFeeBps: config.curveFeeBps,
-            phantomQuote: config.phantomQuote,
-            graduationThreshold: config.graduationThreshold,
-            poolFee: config.poolFee,
-            tickSpacing: config.tickSpacing,
-            enabled: config.enabled,
-          }),
-        )
+        .map((config, id): LaunchConfigWithId => ({
+          id: BigInt(id),
+          supply: config.supply,
+          curveFeeBps: config.curveFeeBps,
+          phantomQuote: config.phantomQuote,
+          graduationThreshold: config.graduationThreshold,
+          poolFee: config.poolFee,
+          tickSpacing: config.tickSpacing,
+          enabled: config.enabled,
+        }))
         .filter((config) => config.enabled);
     },
 
@@ -88,10 +78,7 @@ export function createFactoryModule(
       return read<LaunchedToken>("getLaunchedToken", [token]);
     },
 
-    async previewLaunchEconomics(
-      configId: bigint,
-      pairToken: Address,
-    ): Promise<Hex> {
+    async previewLaunchEconomics(configId: bigint, pairToken: Address): Promise<Hex> {
       return read<Hex>("previewLaunchEconomics", [configId, pairToken]);
     },
 
@@ -111,17 +98,14 @@ export function createFactoryModule(
       return read<boolean>("approvedPairTokens", [pairToken]);
     },
 
-    async pairTokenEconomics(
-      pairToken: Address,
-    ): Promise<{
+    async pairTokenEconomics(pairToken: Address): Promise<{
       phantomQuote: bigint;
       graduationThreshold: bigint;
       decimals: number;
     }> {
-      const result = await read<readonly [bigint, bigint, number]>(
-        "pairTokenEconomics",
-        [pairToken],
-      );
+      const result = await read<readonly [bigint, bigint, number]>("pairTokenEconomics", [
+        pairToken,
+      ]);
       return {
         phantomQuote: result[0],
         graduationThreshold: result[1],
@@ -136,10 +120,7 @@ export function createFactoryModule(
       snipeTaxExemptions: Address[] = [],
     ): Promise<`0x${string}`> {
       requireValidAddress(pairToken, "pairToken");
-      requireValidCreatorTax(
-        params.creatorTaxBps,
-        await this.maxCreatorTaxBps(),
-      );
+      requireValidCreatorTax(params.creatorTaxBps, await this.maxCreatorTaxBps());
       requireValidExemptions(snipeTaxExemptions);
 
       const [expectedEconomics, launchFeeAmount] = await Promise.all([
@@ -169,11 +150,7 @@ export function createFactoryModule(
         );
       }
 
-      return write(
-        "launchToken",
-        [pinnedParams, configId, pairToken],
-        launchFeeAmount,
-      );
+      return write("launchToken", [pinnedParams, configId, pairToken], launchFeeAmount);
     },
 
     async launchAndBuy(
@@ -192,14 +169,10 @@ export function createFactoryModule(
     }> {
       requireValidAddress(pairToken, "pairToken");
       requireValidAddress(recipient, "recipient");
-      requireValidCreatorTax(
-        params.creatorTaxBps,
-        await this.maxCreatorTaxBps(),
-      );
+      requireValidCreatorTax(params.creatorTaxBps, await this.maxCreatorTaxBps());
       requireValidExemptions(snipeTaxExemptions);
 
-      if (!wallet)
-        throw new Error("Wallet required for write operations");
+      if (!wallet) throw new Error("Wallet required for write operations");
 
       const [expectedEconomics, launchFeeAmount] = await Promise.all([
         this.previewLaunchEconomics(configId, pairToken),
@@ -219,10 +192,7 @@ export function createFactoryModule(
         salt: params.salt,
       };
 
-      const value =
-        pairToken === ZERO_ADDRESS
-          ? launchFeeAmount + quoteIn
-          : launchFeeAmount;
+      const value = pairToken === ZERO_ADDRESS ? launchFeeAmount + quoteIn : launchFeeAmount;
 
       const { request, result } = await publicClient.simulateContract({
         address: addresses.launchAndBuy,
@@ -244,11 +214,7 @@ export function createFactoryModule(
       const hash = await wallet.writeContract(request);
 
       // Parse result to extract token and curve addresses
-      const typedResult = result as unknown as readonly [
-        Address,
-        Address,
-        bigint,
-      ];
+      const typedResult = result as unknown as readonly [Address, Address, bigint];
 
       return {
         hash,

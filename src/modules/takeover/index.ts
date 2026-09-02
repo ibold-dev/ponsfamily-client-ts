@@ -1,7 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-} from "viem";
+import { type Address, type PublicClient } from "viem";
 import { factoryAbi } from "../../abis/factory.js";
 import type { TakeoverModule, PendingTakeover } from "../../types.js";
 import { ZERO_ADDRESS } from "../../constants.js";
@@ -21,10 +18,7 @@ export function createTakeoverModule(
         args: [token],
       });
 
-      const isPending =
-        recipient !== ZERO_ADDRESS &&
-        effectiveAt > 0n &&
-        expiresAt > 0n;
+      const isPending = recipient !== ZERO_ADDRESS && effectiveAt > 0n && expiresAt > 0n;
 
       return {
         proposedRecipient: recipient,

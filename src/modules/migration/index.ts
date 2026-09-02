@@ -1,8 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-  parseAbi,
-} from "viem";
+import { type Address, type PublicClient, parseAbi } from "viem";
 import type { MigrationModule, MigrationStatus, MigrationEpoch, PonsWallet } from "../../types.js";
 
 const migrationAbi = parseAbi([
@@ -79,12 +75,8 @@ export function createMigrationModule(
       return { mandate, totalDeposited, settled, claimable, epochs };
     },
 
-    async deposit(
-      migrationAddress: Address,
-      amount: bigint,
-    ): Promise<`0x${string}`> {
-      if (!wallet)
-        throw new Error("Wallet required for deposit");
+    async deposit(migrationAddress: Address, amount: bigint): Promise<`0x${string}`> {
+      if (!wallet) throw new Error("Wallet required for deposit");
       const { request } = await publicClient.simulateContract({
         address: migrationAddress,
         abi: migrationAbi,
@@ -96,8 +88,7 @@ export function createMigrationModule(
     },
 
     async claim(migrationAddress: Address): Promise<`0x${string}`> {
-      if (!wallet)
-        throw new Error("Wallet required for claim");
+      if (!wallet) throw new Error("Wallet required for claim");
       const { request } = await publicClient.simulateContract({
         address: migrationAddress,
         abi: migrationAbi,

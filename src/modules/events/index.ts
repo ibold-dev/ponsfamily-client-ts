@@ -1,8 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-  parseAbiItem,
-} from "viem";
+import { type Address, type PublicClient, parseAbiItem } from "viem";
 import type {
   EventsModule,
   LaunchEvent,

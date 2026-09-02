@@ -1,10 +1,4 @@
-import {
-  type Address,
-  type PublicClient,
-  createPublicClient,
-  decodeEventLog,
-  http,
-} from "viem";
+import { type PublicClient, createPublicClient, decodeEventLog, http } from "viem";
 import { ROBINHOOD_CHAIN_ID, ADDRESSES } from "./constants.js";
 import type { PonsClientConfig, PonsWallet } from "./types.js";
 import { createFactoryModule } from "./modules/factory/index.js";
