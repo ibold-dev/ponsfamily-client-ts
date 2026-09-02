@@ -1,16 +1,15 @@
 import {
   type Address,
   type PublicClient,
-  type WalletClient,
 } from "viem";
 import { vaultAbi } from "../../abis/vault.js";
-import type { BuybackModule, VestingState } from "../../types.js";
+import type { BuybackModule, PonsWallet, VestingState } from "../../types.js";
 
 type ContractAddresses = { buybackVault: Address };
 
 export function createBuybackModule(
   publicClient: PublicClient,
-  walletClient: WalletClient | undefined,
+  wallet: PonsWallet | undefined,
   addresses: ContractAddresses,
 ): BuybackModule {
   return {
@@ -70,15 +69,15 @@ export function createBuybackModule(
     },
 
     async release(token: Address): Promise<`0x${string}`> {
-      if (!walletClient) throw new Error("Wallet client required for release");
+      if (!wallet) throw new Error("Wallet required for release");
       const { request } = await publicClient.simulateContract({
         address: addresses.buybackVault,
         abi: vaultAbi,
         functionName: "release",
         args: [token],
-        account: walletClient.account!,
+        account: wallet.account!,
       });
-      return walletClient.writeContract(request);
+      return wallet.writeContract(request);
     },
   };
 }

@@ -1,6 +1,6 @@
 // ── Core ───────────────────────────────────────────────────────────────────
 export { createPonsClient, decodeEventLog } from "./client.js";
-export type { PonsClient, PonsClientConfig } from "./client.js";
+export type { PonsClient, PonsClientConfig, PonsWallet, DeployedAddresses } from "./client.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 export {
@@ -17,6 +17,7 @@ export {
 export type { Phase } from "./constants.js";
 
 // ── Types ──────────────────────────────────────────────────────────────────
+export type { Address, Hex } from "viem";
 export type {
   LaunchConfig,
   LaunchConfigWithId,

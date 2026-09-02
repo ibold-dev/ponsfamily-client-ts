@@ -1,7 +1,6 @@
 import {
   type Address,
   type PublicClient,
-  type WalletClient,
   decodeEventLog,
 } from "viem";
 import { curveAbi } from "../../abis/curve.js";
@@ -12,6 +11,7 @@ import type {
   CurveReserves,
   CurveState,
   CurveModule,
+  PonsWallet,
   SellQuote,
   SellResult,
 } from "../../types.js";
@@ -21,7 +21,7 @@ type ContractAddresses = Record<string, Address>;
 
 export function createCurveModule(
   publicClient: PublicClient,
-  walletClient: WalletClient | undefined,
+  wallet: PonsWallet | undefined,
   _addresses: ContractAddresses,
 ): CurveModule {
   const read = async <T>(
@@ -42,17 +42,17 @@ export function createCurveModule(
     args: readonly unknown[],
     value?: bigint,
   ): Promise<`0x${string}`> => {
-    if (!walletClient)
-      throw new Error("Wallet client required for write operations");
+    if (!wallet)
+      throw new Error("Wallet required for write operations");
     const { request } = await publicClient.simulateContract({
       address: contractAddress,
       abi: curveAbi,
       functionName: functionName as never,
       args: args as never,
-      account: walletClient.account!,
+      account: wallet.account!,
       value,
     });
-    return walletClient.writeContract(request);
+    return wallet.writeContract(request);
   };
 
   return {

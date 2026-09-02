@@ -1,19 +1,18 @@
 import {
   type Address,
   type PublicClient,
-  type WalletClient,
 } from "viem";
 import { escrowAbi } from "../../abis/escrow.js";
 import { factoryAbi } from "../../abis/factory.js";
 import { curveAbi } from "../../abis/curve.js";
 import { hookAbi } from "../../abis/hook.js";
-import type { FeesModule, FeePolicy } from "../../types.js";
+import type { FeesModule, FeePolicy, PonsWallet } from "../../types.js";
 
 type ContractAddresses = { feeEscrow: Address; factory: Address; memeHook: Address };
 
 export function createFesModule(
   publicClient: PublicClient,
-  walletClient: WalletClient | undefined,
+  wallet: PonsWallet | undefined,
   addresses: ContractAddresses,
 ): FeesModule {
   return {
@@ -39,26 +38,26 @@ export function createFesModule(
     },
 
     async claim(): Promise<`0x${string}`> {
-      if (!walletClient) throw new Error("Wallet client required for claim");
+      if (!wallet) throw new Error("Wallet required for claim");
       const { request } = await publicClient.simulateContract({
         address: addresses.feeEscrow,
         abi: escrowAbi,
         functionName: "claim",
-        account: walletClient.account!,
+        account: wallet.account!,
       });
-      return walletClient.writeContract(request);
+      return wallet.writeContract(request);
     },
 
     async claimToken(token: Address): Promise<`0x${string}`> {
-      if (!walletClient) throw new Error("Wallet client required for claimToken");
+      if (!wallet) throw new Error("Wallet required for claimToken");
       const { request } = await publicClient.simulateContract({
         address: addresses.feeEscrow,
         abi: escrowAbi,
         functionName: "claimToken",
         args: [token],
-        account: walletClient.account!,
+        account: wallet.account!,
       });
-      return walletClient.writeContract(request);
+      return wallet.writeContract(request);
     },
 
     async getUnsweptBalance(

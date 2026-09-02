@@ -1,13 +1,12 @@
 import {
   type Address,
   type PublicClient,
-  type WalletClient,
   createPublicClient,
   decodeEventLog,
   http,
 } from "viem";
 import { ROBINHOOD_CHAIN_ID, ADDRESSES } from "./constants.js";
-import type { PonsClientConfig } from "./types.js";
+import type { PonsClientConfig, PonsWallet } from "./types.js";
 import { createFactoryModule } from "./modules/factory/index.js";
 import { createCurveModule } from "./modules/curve/index.js";
 import { createPoolModule } from "./modules/pool/index.js";
@@ -29,7 +28,7 @@ const robinhoodChain = {
 
 export interface PonsClient {
   publicClient: PublicClient;
-  walletClient: WalletClient | undefined;
+  wallet: PonsWallet | undefined;
   chainId: number;
   factory: ReturnType<typeof createFactoryModule>;
   curve: ReturnType<typeof createCurveModule>;
@@ -76,22 +75,22 @@ export function createPonsClient(config: PonsClientConfig): PonsClient {
       transport: http(config.rpcUrl),
     });
 
-  const walletClient = config.wallet;
+  const wallet = config.wallet;
 
   const addresses: DeployedAddresses = ADDRESSES;
 
-  const factory = createFactoryModule(publicClient, walletClient, addresses);
-  const curve = createCurveModule(publicClient, walletClient, addresses);
+  const factory = createFactoryModule(publicClient, wallet, addresses);
+  const curve = createCurveModule(publicClient, wallet, addresses);
   const pool = createPoolModule(publicClient, addresses);
-  const fees = createFesModule(publicClient, walletClient, addresses);
-  const buyback = createBuybackModule(publicClient, walletClient, addresses);
+  const fees = createFesModule(publicClient, wallet, addresses);
+  const buyback = createBuybackModule(publicClient, wallet, addresses);
   const events = createEventsModule(publicClient, addresses);
   const takeover = createTakeoverModule(publicClient, addresses);
-  const migration = createMigrationModule(publicClient, walletClient, addresses);
+  const migration = createMigrationModule(publicClient, wallet, addresses);
 
   return {
     publicClient,
-    walletClient,
+    wallet,
     chainId: chain.id,
     factory,
     curve,
@@ -105,4 +104,4 @@ export function createPonsClient(config: PonsClientConfig): PonsClient {
 }
 
 export { decodeEventLog };
-export type { PonsClientConfig };
+export type { PonsClientConfig, PonsWallet };

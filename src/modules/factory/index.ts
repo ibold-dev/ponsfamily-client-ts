@@ -2,7 +2,6 @@ import {
   type Address,
   type Hex,
   type PublicClient,
-  type WalletClient,
 } from "viem";
 import { factoryAbi } from "../../abis/factory.js";
 import { routerAbi } from "../../abis/router.js";
@@ -12,6 +11,7 @@ import type {
   LaunchConfig,
   LaunchConfigWithId,
   LaunchedToken,
+  PonsWallet,
   TokenParams,
 } from "../../types.js";
 import {
@@ -24,7 +24,7 @@ type ContractAddresses = { factory: Address; launchAndBuy: Address };
 
 export function createFactoryModule(
   publicClient: PublicClient,
-  walletClient: WalletClient | undefined,
+  wallet: PonsWallet | undefined,
   addresses: ContractAddresses,
 ): FactoryModule {
   const read = async <T>(
@@ -43,17 +43,17 @@ export function createFactoryModule(
     args: readonly unknown[],
     value?: bigint,
   ): Promise<`0x${string}`> => {
-    if (!walletClient)
-      throw new Error("Wallet client required for write operations");
+    if (!wallet)
+      throw new Error("Wallet required for write operations");
     const { request } = await publicClient.simulateContract({
       address: addresses.factory,
       abi: factoryAbi,
       functionName: functionName as never,
       args: args as never,
-      account: walletClient.account!,
+      account: wallet.account!,
       value,
     });
-    return walletClient.writeContract(request);
+    return wallet.writeContract(request);
   };
 
   return {
@@ -198,8 +198,8 @@ export function createFactoryModule(
       );
       requireValidExemptions(snipeTaxExemptions);
 
-      if (!walletClient)
-        throw new Error("Wallet client required for write operations");
+      if (!wallet)
+        throw new Error("Wallet required for write operations");
 
       const [expectedEconomics, launchFeeAmount] = await Promise.all([
         this.previewLaunchEconomics(configId, pairToken),
@@ -237,11 +237,11 @@ export function createFactoryModule(
           recipient,
           snipeTaxExemptions,
         ],
-        account: walletClient.account!,
+        account: wallet.account!,
         value,
       });
 
-      const hash = await walletClient.writeContract(request);
+      const hash = await wallet.writeContract(request);
 
       // Parse result to extract token and curve addresses
       const typedResult = result as unknown as readonly [

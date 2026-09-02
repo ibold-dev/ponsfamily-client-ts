@@ -1,10 +1,9 @@
 import {
   type Address,
   type PublicClient,
-  type WalletClient,
   parseAbi,
 } from "viem";
-import type { MigrationModule, MigrationStatus, MigrationEpoch } from "../../types.js";
+import type { MigrationModule, MigrationStatus, MigrationEpoch, PonsWallet } from "../../types.js";
 
 const migrationAbi = parseAbi([
   "function mandate() view returns (uint256)",
@@ -21,7 +20,7 @@ type ContractAddresses = Record<string, Address>;
 
 export function createMigrationModule(
   publicClient: PublicClient,
-  walletClient: WalletClient | undefined,
+  wallet: PonsWallet | undefined,
   _addresses: ContractAddresses,
 ): MigrationModule {
   return {
@@ -84,28 +83,28 @@ export function createMigrationModule(
       migrationAddress: Address,
       amount: bigint,
     ): Promise<`0x${string}`> {
-      if (!walletClient)
-        throw new Error("Wallet client required for deposit");
+      if (!wallet)
+        throw new Error("Wallet required for deposit");
       const { request } = await publicClient.simulateContract({
         address: migrationAddress,
         abi: migrationAbi,
         functionName: "deposit",
         args: [amount],
-        account: walletClient.account!,
+        account: wallet.account!,
       });
-      return walletClient.writeContract(request);
+      return wallet.writeContract(request);
     },
 
     async claim(migrationAddress: Address): Promise<`0x${string}`> {
-      if (!walletClient)
-        throw new Error("Wallet client required for claim");
+      if (!wallet)
+        throw new Error("Wallet required for claim");
       const { request } = await publicClient.simulateContract({
         address: migrationAddress,
         abi: migrationAbi,
         functionName: "claim",
-        account: walletClient.account!,
+        account: wallet.account!,
       });
-      return walletClient.writeContract(request);
+      return wallet.writeContract(request);
     },
   };
 }

@@ -1,4 +1,4 @@
-import { type Address, type Hex, type PublicClient, type WalletClient } from "viem";
+import { type Account, type Address, type Hex, type PublicClient, type WalletClient } from "viem";
 import type { PHASE } from "./constants.js";
 
 // ── Launch Configuration ───────────────────────────────────────────────────
@@ -170,11 +170,17 @@ export interface QuoteAsset {
 
 // ── Client Configuration ───────────────────────────────────────────────────
 
+/** Minimal wallet interface — only what the client needs for write operations */
+export interface PonsWallet {
+  account: Account;
+  writeContract: WalletClient["writeContract"];
+}
+
 export interface PonsClientConfig {
   /** RPC URL for Robinhood Chain */
   rpcUrl: string;
-  /** Optional wallet client for write operations */
-  wallet?: WalletClient;
+  /** Optional wallet for write operations (signing + sending transactions) */
+  wallet?: PonsWallet;
   /** Optional public client override */
   publicClient?: PublicClient;
   /** Chain override (defaults to Robinhood Chain 4663) */
