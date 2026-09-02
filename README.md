@@ -1,17 +1,17 @@
-# @robhdev/pons-client
+# pons-client
 
 TypeScript client for the [Pons v2](https://docs.ponsfamily.com/v2) token launch protocol on Robinhood Chain (4663).
 
 ## Install
 
 ```bash
-npm install @robhdev/pons-client
+npm install pons-client
 ```
 
 ## Setup
 
 ```ts
-import { createPonsClient } from "@robhdev/pons-client";
+import { createPonsClient } from "pons-client";
 
 // Read-only client
 const pons = createPonsClient({ rpcUrl: "https://rpc.robinhood.com" });
@@ -115,7 +115,7 @@ Copy `.env.example` to `.env` and fill in your values.
 | 03 | `npx tsx examples/03-buy-sell-curve.ts` | Quote trades on curve | `RPC_URL`, `CURVE_ADDRESS` |
 | 04 | `npx tsx examples/04-quote-trade.ts` | Local curve math | `RPC_URL`, `CURVE_ADDRESS` |
 | 05 | `npx tsx examples/05-track-graduation.ts` | Track graduation progress | `RPC_URL`, `TOKEN_ADDRESS` |
-| 06 | `npx tsx examples/06-claim-fees.ts` | Claim creator fees | `RPC_URL`, `PRIVATE_KEY`, `CREATOR_ADDRESS` |
+| 06 | `npx tsx examples/06-claim-fees.ts` | Claim creator fees | `RPC_URL`, `PRIVATE_KEY` |
 | 07 | `npx tsx examples/07-read-vesting.ts` | Read buyback vesting | `RPC_URL`, `TOKEN_ADDRESS` |
 | 08 | `npx tsx examples/08-index-events.ts` | Query historical events | `RPC_URL`, `FROM_BLOCK` |
 | 09 | `npx tsx examples/09-pool-swap.ts` | Read pool state | `RPC_URL`, `TOKEN_ADDRESS` |
@@ -142,9 +142,11 @@ Robinhood Chain (4663):
 ## Development
 
 ```bash
-npm run build      # build dist/
-npm test           # run 49 unit tests
-npm run typecheck  # check for type errors
+npm run build        # build dist/
+npm test             # run 49 unit tests
+npm run typecheck    # check for type errors
+npm run lint         # lint source files
+npm run format:check # check formatting
 ```
 
 ## License
