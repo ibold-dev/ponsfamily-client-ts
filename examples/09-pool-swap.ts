@@ -1,28 +1,34 @@
 /**
  * Example 09: Pool Operations
  *
- * Demonstrates how to interact with a graduated Uniswap v4 pool,
- * including building pool keys, computing pool IDs, and reading
- * pending fees from the pons hook.
+ * Interacts with a graduated Uniswap v4 pool — builds pool keys, computes
+ * pool IDs, and reads pending fees from the pons hook.
+ *
+ * Env vars:
+ *   RPC_URL        — Robinhood Chain RPC endpoint
+ *   TOKEN_ADDRESS  — Live token contract address (must be graduated, phase 2)
  */
 
+import dotenv from "dotenv";
 import { createPonsClient, type Address } from "../src/index.js";
 
-const TOKEN_ADDRESS: Address = "0x0000000000000000000000000000000000000000";
+dotenv.config({ path: ".env" });
+
+const RPC_URL = process.env.RPC_URL!;
+const TOKEN_ADDRESS = process.env.TOKEN_ADDRESS!;
+if (!RPC_URL || !TOKEN_ADDRESS) {
+  console.error("Set RPC_URL and TOKEN_ADDRESS env vars");
+  process.exit(1);
+}
 
 async function main() {
-  const pons = createPonsClient({
-    rpcUrl: "https://rpc.robinhood.com",
-  });
+  const pons = createPonsClient({ rpcUrl: RPC_URL });
 
-  // Get the launch record
-  const launch = await pons.factory.getLaunchedToken(TOKEN_ADDRESS);
-
+  const launch = await pons.factory.getLaunchedToken(TOKEN_ADDRESS as Address);
   if (!launch.exists) {
     console.log("Token not found");
     return;
   }
-
   if (launch.phase !== 2) {
     console.log(`Launch is in phase ${launch.phase} — not yet graduated`);
     return;
@@ -41,7 +47,7 @@ async function main() {
   const poolId = pons.pool.getPoolId(launch);
   console.log(`\nPool ID: ${poolId}`);
 
-  // Read pending fees from the hook
+  // Read pending fees
   const pendingQuote = await pons.pool.pendingFees(poolId, launch.pairToken);
   const pendingToken = await pons.pool.pendingFees(poolId, launch.token);
   const taxQuote = await pons.pool.pendingCreatorTax(poolId, launch.pairToken);
@@ -53,8 +59,8 @@ async function main() {
   console.log(`  Creator (quote):   ${taxQuote}`);
   console.log(`  Creator (token):   ${taxToken}`);
 
-  // Get fee policy
-  const policy = await pons.fees.getFeePolicy(TOKEN_ADDRESS);
+  // Fee policy
+  const policy = await pons.fees.getFeePolicy(TOKEN_ADDRESS as Address);
   console.log("\nFee Policy:");
   console.log(`  Pool Fee: ${policy.hookFeeBps} bps`);
   console.log(`  (Pool charges zero Uniswap fee — the hook charges instead)`);

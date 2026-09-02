@@ -1,53 +1,76 @@
 /**
  * Example 06: Claim Fees
  *
- * Shows how to check and claim accumulated fees from the fee escrow.
- * Demonstrates both native ETH and ERC-20 token fee claims.
+ * Checks and claims accumulated fees from the fee escrow.
+ *
+ * Env vars:
+ *   RPC_URL         — Robinhood Chain RPC endpoint
+ *   PRIVATE_KEY     — Wallet private key (for claiming)
+ *   CREATOR_ADDRESS — Address to check balances for
+ *   QUOTE_ASSET     — (optional) ERC-20 quote asset to check/claim
  */
 
+import dotenv from "dotenv";
 import { createPonsClient, formatETH, type Address } from "../src/index.js";
+import { createWalletClient, http } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { RobinhoodChain } from "./utils/chain.js";
 
-const CREATOR_ADDRESS: Address = "0x0000000000000000000000000000000000000001";
-const QUOTE_ASSET: Address = "0x0000000000000000000000000000000000000000";
+dotenv.config({ path: ".env" });
+
+const RPC_URL = process.env.RPC_URL!;
+const PRIVATE_KEY = process.env.PRIVATE_KEY!;
+const CREATOR_ADDRESS = process.env.CREATOR_ADDRESS!;
+if (!RPC_URL || !PRIVATE_KEY || !CREATOR_ADDRESS) {
+  console.error("Set RPC_URL, PRIVATE_KEY, and CREATOR_ADDRESS env vars");
+  process.exit(1);
+}
 
 async function main() {
-  const pons = createPonsClient({
-    rpcUrl: "https://rpc.robinhood.com",
+  const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
+
+  const walletClient = createWalletClient({
+    account,
+    chain: RobinhoodChain,
+    transport: http(RPC_URL),
   });
 
-  // 1. Check native ETH balance (from ETH-paired launches)
-  const ethBalance = await pons.fees.getBalance(CREATOR_ADDRESS);
+  const pons = createPonsClient({
+    rpcUrl: RPC_URL,
+    wallet: { account, writeContract: walletClient.writeContract },
+  });
+
+  // 1. Check native ETH balance
+  const ethBalance = await pons.fees.getBalance(CREATOR_ADDRESS as Address);
   console.log(`Native ETH fees: ${formatETH(ethBalance)}`);
 
-  // 2. Check ERC-20 balance (from custom-pair launches)
-  const erc20Balance = await pons.fees.getERC20Balance(
-    CREATOR_ADDRESS,
-    QUOTE_ASSET,
-  );
-  console.log(`ERC-20 fees (${QUOTE_ASSET}): ${erc20Balance}`);
+  // 2. Check ERC-20 balance if quote asset provided
+  const quoteAsset = process.env.QUOTE_ASSET as Address | undefined;
+  if (quoteAsset) {
+    const erc20Balance = await pons.fees.getERC20Balance(
+      CREATOR_ADDRESS as Address,
+      quoteAsset,
+    );
+    console.log(`ERC-20 fees (${quoteAsset}): ${erc20Balance}`);
+  }
 
-  // 3. Check fee policy for a specific token
-  const tokenAddress: Address = "0x0000000000000000000000000000000000000002";
-  const policy = await pons.fees.getFeePolicy(tokenAddress);
-  console.log("\nFee Policy:");
-  console.log(`  Protocol Recipient:     ${policy.protocolFeeRecipient}`);
-  console.log(`  Protocol Share:         ${policy.protocolFeeShareBps} bps`);
-  console.log(`  Buyback Burn:           ${policy.buybackBurnBps} bps`);
-  console.log(`  Hook Fee:               ${policy.hookFeeBps} bps`);
-  console.log(`  Max Price Impact:       ${policy.maxInternalPriceImpactBps} bps`);
+  // 3. Claim native fees
+  if (ethBalance > 0n) {
+    const hash = await pons.fees.claim();
+    console.log(`Claimed ETH fees: tx ${hash}`);
+  }
 
-  // 4. Claim fees (requires wallet)
-  // Uncomment when you have a wallet configured:
-  //
-  // if (ethBalance > 0n) {
-  //   const hash = await pons.fees.claim();
-  //   console.log(`\nClaimed ETH fees: tx ${hash}`);
-  // }
-  //
-  // if (erc20Balance > 0n) {
-  //   const hash = await pons.fees.claimToken(QUOTE_ASSET);
-  //   console.log(`\nClaimed ERC-20 fees: tx ${hash}`);
-  // }
+  // 4. Claim ERC-20 fees
+  if (quoteAsset) {
+    const erc20Balance = await pons.fees.getERC20Balance(
+      CREATOR_ADDRESS as Address,
+      quoteAsset,
+    );
+    if (erc20Balance > 0n) {
+      const hash = await pons.fees.claimToken(quoteAsset);
+      console.log(`Claimed ERC-20 fees: tx ${hash}`);
+    }
+  }
 }
 
 main().catch(console.error);

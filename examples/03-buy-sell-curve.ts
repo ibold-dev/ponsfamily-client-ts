@@ -1,24 +1,33 @@
 /**
  * Example 03: Buy and Sell on the Bonding Curve
  *
- * Demonstrates how to trade against a launch's bonding curve before
- * graduation. Shows buy, quote, and sell operations.
+ * Demonstrates trading against a launch's bonding curve before graduation.
+ *
+ * Env vars:
+ *   RPC_URL        — Robinhood Chain RPC endpoint
+ *   CURVE_ADDRESS  — Live curve contract address
+ *   RECIPIENT      — (optional) wallet to receive tokens
  */
 
+import dotenv from "dotenv";
 import { createPonsClient, type Address } from "../src/index.js";
 import { parseEther } from "viem";
 
-// Replace with a live curve address
-const CURVE_ADDRESS: Address = "0x0000000000000000000000000000000000000000";
-const RECIPIENT: Address = "0x0000000000000000000000000000000000000001";
+dotenv.config({ path: ".env" });
+
+const RPC_URL = process.env.RPC_URL!;
+const CURVE_ADDRESS = process.env.CURVE_ADDRESS!;
+if (!RPC_URL || !CURVE_ADDRESS) {
+  console.error("Set RPC_URL and CURVE_ADDRESS env vars");
+  process.exit(1);
+}
 
 async function main() {
-  const pons = createPonsClient({
-    rpcUrl: "https://rpc.robinhood.com",
-  });
+  const pons = createPonsClient({ rpcUrl: RPC_URL });
+  const recipient = (process.env.RECIPIENT ?? "0x0000000000000000000000000000000000000001") as Address;
 
   // 1. Check curve state
-  const state = await pons.curve.getState(CURVE_ADDRESS);
+  const state = await pons.curve.getState(CURVE_ADDRESS as Address);
   console.log("Curve State:");
   console.log(`  Quote Reserve:    ${state.reserves.quoteReserve}`);
   console.log(`  Token Reserve:    ${state.reserves.tokenReserve}`);
@@ -35,28 +44,28 @@ async function main() {
 
   // 2. Quote a buy
   const buyAmount = parseEther("0.01");
-  const buyQuote = await pons.curve.quoteBuy(CURVE_ADDRESS, buyAmount, RECIPIENT);
+  const buyQuote = await pons.curve.quoteBuy(CURVE_ADDRESS as Address, buyAmount, recipient);
   console.log("Buy Quote:");
   console.log(`  Tokens Out:  ${buyQuote.tokensOut}`);
   console.log(`  Spent:       ${buyQuote.spent}`);
   console.log(`  Refund:      ${buyQuote.refund}`);
   console.log();
 
-  // 3. Quote a sell (use a fraction of what we'd buy)
+  // 3. Quote a sell
   const sellAmount = buyQuote.tokensOut / 2n;
   if (sellAmount > 0n) {
-    const sellQuote = await pons.curve.quoteSell(CURVE_ADDRESS, sellAmount);
+    const sellQuote = await pons.curve.quoteSell(CURVE_ADDRESS as Address, sellAmount);
     console.log("Sell Quote:");
     console.log(`  Quote Out: ${sellQuote.quoteOut}`);
     console.log();
   }
 
-  // 4. Check snipe tax (will be 0 after 5 seconds)
-  const snipeTax = await pons.curve.currentSnipeTaxBps(CURVE_ADDRESS, RECIPIENT);
+  // 4. Check snipe tax
+  const snipeTax = await pons.curve.currentSnipeTaxBps(CURVE_ADDRESS as Address, recipient);
   console.log(`Snipe Tax: ${snipeTax} bps`);
 
   // 5. Check graduation readiness
-  const ready = await pons.curve.readyToGraduate(CURVE_ADDRESS);
+  const ready = await pons.curve.readyToGraduate(CURVE_ADDRESS as Address);
   console.log(`Ready to graduate: ${ready}`);
 }
 

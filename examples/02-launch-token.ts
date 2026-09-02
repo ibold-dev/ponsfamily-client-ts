@@ -1,34 +1,40 @@
 /**
  * Example 02: Launch a Token
  *
- * Creates a new token launch on Pons v2. This example uses the atomic
- * launch-and-buy pattern to prevent front-running of the opening buy.
+ * Creates a new token launch using the atomic launch-and-buy pattern.
+ *
+ * Env vars:
+ *   RPC_URL       — Robinhood Chain RPC endpoint
+ *   PRIVATE_KEY   — Wallet private key (with funds for launch fee + buy)
  */
 
+import dotenv from "dotenv";
 import { createPonsClient, ZERO_ADDRESS, type TokenParams } from "../src/index.js";
-import { parseEther, toHex, crypto } from "viem";
+import { createWalletClient, http, parseEther, toHex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
+import { RobinhoodChain } from "./utils/chain.js";
+
+dotenv.config({ path: ".env" });
+
+const RPC_URL = process.env.RPC_URL!;
+const PRIVATE_KEY = process.env.PRIVATE_KEY!;
+if (!RPC_URL || !PRIVATE_KEY) {
+  console.error("Set RPC_URL and PRIVATE_KEY env vars");
+  process.exit(1);
+}
 
 async function main() {
-  // In production, use an environment variable for the private key
-  const account = privateKeyToAccount(
-    "0x0000000000000000000000000000000000000000000000000000000000000001",
-  );
+  const account = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
+
+  const walletClient = createWalletClient({
+    account,
+    chain: RobinhoodChain,
+    transport: http(RPC_URL),
+  });
 
   const pons = createPonsClient({
-    rpcUrl: "https://rpc.robinhood.com",
-    wallet: {
-      account,
-      chain: { id: 4663, name: "Robinhood Chain", nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 }, rpcUrls: { default: { http: ["https://rpc.robinhood.com"] } } },
-      transport: undefined as never,
-      type: "walletClient" as const,
-      signMessage: undefined as never,
-      signTransaction: undefined as never,
-      signTypedData: undefined as never,
-      writeContract: undefined as never,
-      getAddresses: undefined as never,
-      requestAddresses: undefined as never,
-    },
+    rpcUrl: RPC_URL,
+    wallet: { account, writeContract: walletClient.writeContract },
   });
 
   // 1. Get available configs
@@ -37,7 +43,6 @@ async function main() {
     console.log("No open launch configs available");
     return;
   }
-
   const configId = configs[0]!.id;
   console.log(`Using config #${configId}`);
 
@@ -71,15 +76,14 @@ async function main() {
     salt,
   };
 
-  // 5. Launch and buy atomically (prevents front-running)
+  // 5. Launch and buy atomically
   const buyAmount = parseEther("0.1");
-
   const result = await pons.factory.launchAndBuy(
     params,
     configId,
-    ZERO_ADDRESS, // native ETH pair
+    ZERO_ADDRESS,
     buyAmount,
-    0n, // minTokensOut (slippage protection — set properly in production)
+    0n,
     account.address,
   );
 
