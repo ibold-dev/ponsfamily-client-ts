@@ -322,16 +322,20 @@ export interface TradeEvent {
 
 export interface FeeSweepEvent {
   poolId: `0x${string}`;
-  quoteFees: bigint;
-  tokenFees: bigint;
+  protocolAmount: bigint;
+  buybackAmount: bigint;
+  creatorAmount: bigint;
+  tokensLocked: bigint;
   blockNumber: bigint;
   transactionHash: `0x${string}`;
 }
 
 export interface TakeoverProposalEvent {
   token: Address;
+  currentRecipient: Address;
   newRecipient: Address;
   effectiveAt: bigint;
+  expiresAt: bigint;
   blockNumber: bigint;
   transactionHash: `0x${string}`;
 }
