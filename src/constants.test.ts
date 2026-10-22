@@ -1,5 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { BPS, PHASE, ROBINHOOD_CHAIN_ID, ADDRESSES, ZERO_ADDRESS } from "./constants.js";
+import {
+  ADDRESSES,
+  BPS,
+  PHASE,
+  ROBINHOOD_CHAIN_ID,
+  SNIPE_TAX_DECAY_NS,
+  SNIPE_TAX_DECAY_SECS,
+  ZERO_ADDRESS,
+} from "./constants.js";
 
 describe("constants", () => {
   it("BPS is 10000", () => {
@@ -15,6 +23,11 @@ describe("constants", () => {
 
   it("ROBINHOOD_CHAIN_ID is 4663", () => {
     expect(ROBINHOOD_CHAIN_ID).toBe(4663);
+  });
+
+  it("expresses the snipe tax decay in EVM timestamp seconds", () => {
+    expect(SNIPE_TAX_DECAY_SECS).toBe(5n);
+    expect(SNIPE_TAX_DECAY_NS).toBe(SNIPE_TAX_DECAY_SECS);
   });
 
   it("ADDRESSES has all required contracts", () => {
