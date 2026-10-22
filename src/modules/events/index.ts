@@ -97,7 +97,7 @@ export function createEventsModule(
       const logs = await publicClient.getLogs({
         address: hook,
         event: parseAbiItem(
-          "event PoolFeesSwept(bytes32 indexed poolId, uint256 quoteFees, uint256 tokenFees, uint256 buybackTokens)",
+          "event PoolFeesSwept(bytes32 indexed poolId, uint256 protocolAmount, uint256 buybackAmount, uint256 creatorAmount, uint256 tokensLocked)",
         ),
         fromBlock,
         toBlock,
@@ -105,8 +105,10 @@ export function createEventsModule(
 
       return logs.map((log) => ({
         poolId: log.args.poolId as `0x${string}`,
-        quoteFees: log.args.quoteFees as bigint,
-        tokenFees: log.args.tokenFees as bigint,
+        protocolAmount: log.args.protocolAmount as bigint,
+        buybackAmount: log.args.buybackAmount as bigint,
+        creatorAmount: log.args.creatorAmount as bigint,
+        tokensLocked: log.args.tokensLocked as bigint,
         blockNumber: log.blockNumber!,
         transactionHash: log.transactionHash,
       }));
@@ -119,7 +121,7 @@ export function createEventsModule(
       const logs = await publicClient.getLogs({
         address: addresses.factory,
         event: parseAbiItem(
-          "event CreatorFeeRecipientChangeProposed(address indexed token, address indexed newRecipient, uint256 effectiveAt)",
+          "event CreatorFeeRecipientChangeProposed(address indexed token, address indexed currentRecipient, address indexed newRecipient, uint256 effectiveAt, uint256 expiresAt)",
         ),
         fromBlock,
         toBlock,
@@ -127,8 +129,10 @@ export function createEventsModule(
 
       return logs.map((log) => ({
         token: log.args.token as Address,
+        currentRecipient: log.args.currentRecipient as Address,
         newRecipient: log.args.newRecipient as Address,
         effectiveAt: log.args.effectiveAt as bigint,
+        expiresAt: log.args.expiresAt as bigint,
         blockNumber: log.blockNumber!,
         transactionHash: log.transactionHash,
       }));

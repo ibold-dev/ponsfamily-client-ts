@@ -13,6 +13,6 @@ export const vaultAbi = parseAbi([
   "function release(address token) returns (uint256 released)",
 
   // ── Events ───────────────────────────────────────────────────────────────
-  "event Locked(address indexed token, uint256 amount, uint256 vestingStart)",
-  "event Released(address indexed token, address indexed recipient, uint256 amount)",
+  "event Locked(address indexed token, address indexed depositor, uint256 amount, uint256 newVestingStart)",
+  "event Released(address indexed token, uint256 creatorAmount, uint256 protocolAmount)",
 ]);
