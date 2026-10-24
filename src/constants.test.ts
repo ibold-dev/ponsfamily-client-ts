@@ -27,7 +27,11 @@ describe("constants", () => {
 
   it("expresses the snipe tax decay in EVM timestamp seconds", () => {
     expect(SNIPE_TAX_DECAY_SECS).toBe(5n);
-    expect(SNIPE_TAX_DECAY_NS).toBe(SNIPE_TAX_DECAY_SECS);
+  });
+
+  it("keeps the deprecated nanosecond alias at its original value", () => {
+    expect(SNIPE_TAX_DECAY_NS).toBe(5_000_000_000n);
+    expect(SNIPE_TAX_DECAY_NS / 1_000_000_000n).toBe(SNIPE_TAX_DECAY_SECS);
   });
 
   it("ADDRESSES has all required contracts", () => {

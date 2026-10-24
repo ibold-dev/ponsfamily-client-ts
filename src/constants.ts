@@ -36,15 +36,15 @@ export type Phase = (typeof PHASE)[keyof typeof PHASE];
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-/** Snipe tax decay window in EVM timestamp seconds */
+/** Snipe tax decay window in EVM timestamp seconds (block.timestamp units) */
 export const SNIPE_TAX_DECAY_SECS = 5n as const;
 
 /**
- * Snipe tax decay window in EVM timestamp seconds.
- * @deprecated Use SNIPE_TAX_DECAY_SECS. This alias is kept for compatibility;
- * despite its old name, the protocol measures the window in seconds.
+ * Snipe tax decay window expressed in nanoseconds (5 seconds).
+ * @deprecated Use SNIPE_TAX_DECAY_SECS when comparing against block timestamps.
+ * This alias preserves its original nanosecond value for backward compatibility.
  */
-export const SNIPE_TAX_DECAY_NS = SNIPE_TAX_DECAY_SECS;
+export const SNIPE_TAX_DECAY_NS = 5_000_000_000n as const;
 
 /** Maximum number of snipe tax exemptions per launch */
 export const MAX_SNIPE_EXEMPTIONS = 32 as const;
