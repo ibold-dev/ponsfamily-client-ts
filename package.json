@@ -1,6 +1,6 @@
 {
   "name": "pons-client",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Industry-standard TypeScript client for the Pons v2 token launch protocol on Robinhood Chain",
   "license": "MIT",
   "type": "module",
