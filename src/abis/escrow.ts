@@ -10,8 +10,8 @@ export const escrowAbi = parseAbi([
   "function claimToken(address token)",
 
   // ── Events ───────────────────────────────────────────────────────────────
-  "event Credited(address indexed recipient, uint256 amount)",
+  "event Credited(address indexed recipient, address indexed depositor, uint256 amount)",
   "event Claimed(address indexed recipient, uint256 amount)",
-  "event CreditedToken(address indexed recipient, address indexed token, uint256 amount)",
+  "event CreditedToken(address indexed recipient, address indexed token, address indexed depositor, uint256 amount)",
   "event ClaimedToken(address indexed recipient, address indexed token, uint256 amount)",
 ]);

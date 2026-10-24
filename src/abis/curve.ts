@@ -26,10 +26,9 @@ export const curveAbi = parseAbi([
   // ── Events ───────────────────────────────────────────────────────────────
   "event CurveBuy(address indexed buyer, address indexed recipient, uint256 quoteIn, uint256 tokensOut, uint256 fee, uint256 tax)",
   "event CurveSell(address indexed seller, address indexed recipient, uint256 tokensIn, uint256 quoteOut, uint256 fee, uint256 tax)",
-  "event CurveBuyRefunded(address indexed buyer, uint256 refundedQuote)",
-  "event CurveCompleted(address indexed token)",
-  "event CurveGraduated(address indexed token)",
-  "event AutoGraduationFailed(address indexed token)",
-  "event FeesSwept(uint256 quoteFees, uint256 tokenFees, uint256 buybackTokens)",
-  "event BuybackLocked(address indexed token, uint256 quoteSpent, uint256 tokensLocked)",
+  "event CurveBuyRefunded(address indexed buyer, uint256 refund)",
+  "event CurveCompleted(address recipient, uint256 quoteOut, uint256 tokenOut)",
+  "event AutoGraduationFailed(address indexed token, uint256 gasRemaining)",
+  "event FeesSwept(uint256 protocolAmount, uint256 buybackAmount, uint256 creatorAmount)",
+  "event BuybackLocked(uint256 quoteSpent, uint256 tokensLocked)",
 ]);

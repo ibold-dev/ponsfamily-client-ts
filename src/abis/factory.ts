@@ -29,8 +29,8 @@ export const factoryAbi = parseAbi([
 
   // ── Events ───────────────────────────────────────────────────────────────
   "event TokenLaunched(address indexed token, address indexed curve, address indexed deployer, address pairToken, uint256 launchConfigId, uint256 graduationThreshold)",
-  "event LaunchSwept(address indexed token, uint256 sweptQuote, uint256 sweptTokens)",
-  "event PoolGraduated(address indexed token, address indexed pool)",
-  "event CreatorFeeRecipientChangeProposed(address indexed token, address indexed newRecipient, uint256 effectiveAt)",
-  "event CreatorFeeRecipientUpdated(address indexed token, address indexed oldRecipient, address indexed newRecipient)",
+  "event LaunchSwept(address indexed token, uint256 quoteOut, uint256 tokenOut)",
+  "event PoolGraduated(address indexed token, uint256 positionId, uint256 tokenAmount, uint256 pairTokenAmount)",
+  "event CreatorFeeRecipientChangeProposed(address indexed token, address indexed currentRecipient, address indexed newRecipient, uint256 effectiveAt, uint256 expiresAt)",
+  "event CreatorFeeRecipientUpdated(address indexed token, address indexed previousRecipient, address indexed newRecipient)",
 ]);
