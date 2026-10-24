@@ -50,10 +50,35 @@ const EXPECTED: Record<string, string[]> = {
   vault: ["Locked(address,address,uint256,uint256)", "Released(address,uint256,uint256)"],
 };
 
+// Argument names are not part of topic0, but they determine the keys viem exposes
+// in `log.args`, so keep them aligned with the deployed declarations as well.
+const EXPECTED_ARG_NAMES: Record<string, Record<string, string[]>> = {
+  curve: {
+    CurveBuyRefunded: ["buyer", "refund"],
+    FeesSwept: ["protocolAmount", "buybackAmount", "creatorAmount"],
+  },
+  factory: {
+    LaunchSwept: ["token", "quoteOut", "tokenOut"],
+    CreatorFeeRecipientUpdated: ["token", "previousRecipient", "newRecipient"],
+  },
+};
+
 describe("ABI events match the deployed contracts", () => {
   for (const [name, events] of Object.entries(DEPLOYED)) {
     it(name, () => {
       expect(events.map((e) => toEventSignature(e))).toEqual(EXPECTED[name]);
     });
+  }
+});
+
+describe("ABI event argument names match the deployed contracts", () => {
+  for (const [abiName, events] of Object.entries(EXPECTED_ARG_NAMES)) {
+    for (const [eventName, names] of Object.entries(events)) {
+      it(`${abiName}.${eventName}`, () => {
+        const event = DEPLOYED[abiName]?.find((e) => e.name === eventName);
+        expect(event, `${eventName} missing from ${abiName} ABI`).toBeDefined();
+        expect(event?.inputs.map((i) => i.name)).toEqual(names);
+      });
+    }
   }
 });
