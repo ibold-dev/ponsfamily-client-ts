@@ -14,7 +14,7 @@ dotenv.config({path:".env"});
 
 const RPC_URL = process.env.RPC_URL!;
 if (!RPC_URL) {
-  console.error("Set RPC_URL env var (e.g. https://rpc.robinhood.com)");
+  console.error("Set RPC_URL env var (e.g. https://rpc.mainnet.chain.robinhood.com)");
   process.exit(1);
 }
 

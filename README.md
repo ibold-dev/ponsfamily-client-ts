@@ -14,11 +14,11 @@ npm install pons-client
 import { createPonsClient } from "pons-client";
 
 // Read-only client
-const pons = createPonsClient({ rpcUrl: "https://rpc.robinhood.com" });
+const pons = createPonsClient({ rpcUrl: "https://rpc.mainnet.chain.robinhood.com" });
 
 // With wallet (for swaps, launches, claims)
 const pons = createPonsClient({
-  rpcUrl: "https://rpc.robinhood.com",
+  rpcUrl: "https://rpc.mainnet.chain.robinhood.com",
   wallet: { account, writeContract: walletClient.writeContract },
 });
 ```
