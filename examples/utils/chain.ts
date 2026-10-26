@@ -5,6 +5,6 @@ export const RobinhoodChain: Chain = {
   name: "Robinhood Chain",
   nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   rpcUrls: {
-    default: { http: ["https://rpc.robinhood.com"] },
+    default: { http: ["https://rpc.mainnet.chain.robinhood.com"] },
   },
 };
