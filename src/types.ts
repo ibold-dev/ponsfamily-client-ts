@@ -194,6 +194,8 @@ export interface FactoryModule {
   getLaunchedToken(token: Address): Promise<LaunchedToken>;
   previewLaunchEconomics(configId: bigint, pairToken: Address): Promise<Hex>;
   launchFee(): Promise<bigint>;
+  snipeTaxStartBps(): Promise<bigint>;
+  snipeTaxSeconds(): Promise<bigint>;
   canLaunch(address: Address): Promise<boolean>;
   maxCreatorTaxBps(): Promise<bigint>;
   approvedPairTokens(pairToken: Address): Promise<boolean>;

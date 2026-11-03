@@ -86,6 +86,14 @@ export function createFactoryModule(
       return read<bigint>("launchFee");
     },
 
+    async snipeTaxStartBps(): Promise<bigint> {
+      return read<bigint>("snipeTaxStartBps");
+    },
+
+    async snipeTaxSeconds(): Promise<bigint> {
+      return read<bigint>("snipeTaxSeconds");
+    },
+
     async canLaunch(address: Address): Promise<boolean> {
       return read<boolean>("canLaunch", [address]);
     },
