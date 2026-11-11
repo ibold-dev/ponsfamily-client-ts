@@ -268,17 +268,33 @@ export interface BuybackModule {
   release(token: Address): Promise<`0x${string}`>;
 }
 
+export interface EventQueryOptions {
+  /** Maximum number of blocks per eth_getLogs request (inclusive). Defaults to 100_000n. */
+  chunkSize?: bigint;
+}
+
 export interface EventsModule {
-  getLaunches(fromBlock: bigint, toBlock?: bigint | "latest"): Promise<LaunchEvent[]>;
-  getTrades(curve: Address, fromBlock: bigint, toBlock?: bigint | "latest"): Promise<TradeEvent[]>;
+  getLaunches(
+    fromBlock: bigint,
+    toBlock?: bigint | "latest",
+    options?: EventQueryOptions,
+  ): Promise<LaunchEvent[]>;
+  getTrades(
+    curve: Address,
+    fromBlock: bigint,
+    toBlock?: bigint | "latest",
+    options?: EventQueryOptions,
+  ): Promise<TradeEvent[]>;
   getFeeSweeps(
     hook: Address,
     fromBlock: bigint,
     toBlock?: bigint | "latest",
+    options?: EventQueryOptions,
   ): Promise<FeeSweepEvent[]>;
   getTakeoverProposals(
     fromBlock: bigint,
     toBlock?: bigint | "latest",
+    options?: EventQueryOptions,
   ): Promise<TakeoverProposalEvent[]>;
 }
 

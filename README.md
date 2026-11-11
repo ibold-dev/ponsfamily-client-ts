@@ -86,6 +86,14 @@ const trades = await pons.events.getTrades(curve, fromBlock);
 const proposals = await pons.events.getTakeoverProposals(fromBlock);
 ```
 
+Each helper takes an optional last argument, `{ chunkSize }`, after `toBlock`. History is read in serial, inclusive block ranges of at most `chunkSize` blocks (default `100_000n`), and the results are concatenated in order. Pass a smaller value if your RPC provider limits `eth_getLogs` ranges. `chunkSize` must be greater than `0n`; otherwise a `RangeError` is thrown before any request is sent.
+
+When `toBlock` is `"latest"` (the default), the chain head is read once at the start and used as a fixed upper bound, so blocks mined during a long scan are not included. If `fromBlock` is past the end of the range, an empty array is returned without querying logs. A failed request rejects the whole call; no partial results are returned.
+
+```ts
+const trades = await pons.events.getTrades(curve, fromBlock, "latest", { chunkSize: 2_000n });
+```
+
 ### takeover
 
 Check pending creator fee recipient changes.

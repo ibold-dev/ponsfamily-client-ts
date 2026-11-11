@@ -44,6 +44,7 @@ export type {
   FeesModule,
   BuybackModule,
   EventsModule,
+  EventQueryOptions,
   TakeoverModule,
   MigrationModule,
   LaunchEvent,
