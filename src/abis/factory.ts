@@ -14,6 +14,8 @@ export const factoryAbi = parseAbi([
   "function getLaunchedToken(address token) view returns (LaunchedToken)",
   "function previewLaunchEconomics(uint256 launchConfigId, address pairToken) view returns (bytes32)",
   "function launchFee() view returns (uint256)",
+  "function snipeTaxStartBps() view returns (uint256)",
+  "function snipeTaxSeconds() view returns (uint256)",
   "function canLaunch(address launcher) view returns (bool)",
   "function maxCreatorTaxBps() view returns (uint16)",
   "function approvedPairTokens(address pairToken) view returns (bool)",

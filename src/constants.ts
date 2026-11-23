@@ -36,7 +36,12 @@ export type Phase = (typeof PHASE)[keyof typeof PHASE];
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
-/** Snipe tax decay window in EVM timestamp seconds (block.timestamp units) */
+/**
+ * Historical snipe tax decay window in EVM timestamp seconds.
+ * @deprecated The factory configuration is mutable. Use
+ * `client.factory.snipeTaxSeconds()` for a prospective launch and
+ * `client.curve.currentSnipeTaxBps()` when quoting an existing curve.
+ */
 export const SNIPE_TAX_DECAY_SECS = 5n as const;
 
 /**

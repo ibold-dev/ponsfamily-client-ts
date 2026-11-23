@@ -32,8 +32,13 @@ List configs, read launches, create tokens.
 ```ts
 const configs = await pons.factory.openLaunchConfigs();
 const launch = await pons.factory.getLaunchedToken(token);
+const snipeTaxStartBps = await pons.factory.snipeTaxStartBps();
+const snipeTaxSeconds = await pons.factory.snipeTaxSeconds();
 const hash = await pons.factory.launchAndBuy(params, configId, pairToken, quoteIn, recipient);
 ```
+
+The factory values are the defaults for a prospective launch. Existing curves snapshot their
+launch settings, so use `pons.curve.currentSnipeTaxBps(curve, recipient)` when quoting a buy.
 
 ### curve
 
