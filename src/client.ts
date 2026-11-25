@@ -42,7 +42,7 @@ export type DeployedAddresses = typeof ADDRESSES;
  *
  * @example
  * ```ts
- * import { createPonsClient } from '@robhdev/pons-client';
+ * import { createPonsClient } from "pons-client";
  *
  * // Read-only client
  * const pons = createPonsClient({ rpcUrl: 'https://...' });
